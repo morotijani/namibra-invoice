@@ -51,29 +51,23 @@ function generateInvoicePDF($invoice_id, $pdo) {
 
     body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--ink); padding: 0; margin: 0; }
     .page { width: 100%; margin: 0 auto; background: var(--white); }
-    .header { background: var(--green); color: #fff; padding: 44px 52px 38px; position: relative; }
-    .header-top { width: 100%; }
-    .brand { float: left; width: 60%; }
-    .brand-mark { float: left; width: 52px; height: 52px; border: 1.5px solid var(--gold); border-radius: 11px; text-align: center; line-height: 52px; font-family: 'DM Serif Display', serif; font-size: 26px; color: var(--gold-soft); margin-right: 16px; }
-    .brand-text { float: left; }
+    .header { background: var(--green); color: #fff; padding: 44px 52px 38px; }
+    .brand-mark { width: 44px; height: 44px; border: 1.5px solid var(--gold); border-radius: 11px; text-align: center; font-family: 'DM Serif Display', serif; font-size: 24px; color: var(--gold-soft); line-height: 44px; }
     .brand-name { font-family: 'DM Serif Display', serif; font-size: 23px; line-height: 1.1; letter-spacing: .2px; }
     .brand-sub { font-size: 12px; color: var(--gold-soft); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 5px; }
-    .doc-title { float: right; width: 35%; text-align: right; }
-    .doc-title h1 { font-family: 'DM Serif Display', serif; font-size: 40px; letter-spacing: 3px; color: var(--gold-soft); line-height: 1; margin: 0; }
-    .doc-title .doc-no { font-family: 'DM Mono', monospace; font-size: 13px; color: #ccc; margin-top: 8px; letter-spacing: .5px; }
-    .status-badge { display: inline-block; margin-top: 8px; padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+    .doc-title h1 { font-family: 'DM Serif Display', serif; font-size: 40px; letter-spacing: 3px; color: var(--gold-soft); line-height: 1; margin: 0; text-align: right; }
+    .doc-no { font-family: 'DM Mono', monospace; font-size: 13px; color: #ccc; margin-top: 8px; letter-spacing: .5px; text-align: right; }
+    .status-badge { display: inline-block; margin-top: 8px; padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; float: right; }
     .status-new { background: #e0f2fe; color: #0284c7; }
     .status-pending { background: #fef08a; color: #854d0e; }
     .status-partial-payment { background: #fed7aa; color: #c2410c; }
     .status-full-paid { background: #bbf7d0; color: #166534; }
     .status-completed { background: #dcfce3; color: #14532d; }
-    .clear { clear: both; }
     .meta { width: 100%; margin-top: 30px; border-collapse: collapse; }
     .meta td { width: 33.33%; padding: 14px 18px; background: #114232; border: 1px solid #1c5440; }
     .meta .lbl { font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--gold-soft); }
     .meta .val { font-family: 'DM Mono', monospace; font-size: 14px; color: #fff; margin-top: 4px; }
     .parties { width: 100%; padding: 40px 52px 8px; }
-    .party-box { float: left; width: 45%; }
     .party-tag { font-size: 10px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--gold); font-weight: 600; margin-bottom: 10px; }
     .party-name { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--ink); margin-bottom: 8px; }
     .party-info { font-size: 13px; line-height: 1.7; color: var(--ink-soft); }
@@ -85,27 +79,13 @@ function generateInvoicePDF($invoice_id, $pdo) {
     table.items tbody td.num { text-align: right; font-family: 'DM Mono', monospace; }
     .item-desc { font-weight: 500; }
     .item-note { font-size: 12px; color: var(--ink-faint); margin-top: 3px; }
-    .totals { padding: 24px 52px 0; text-align: right; }
-    .totals-box { float: right; width: 340px; }
-    .tot-row { width: 100%; padding: 11px 0; font-size: 14px; color: var(--ink-soft); border-bottom: 1px solid var(--rule); }
-    .tot-row .lbl-t { float: left; }
-    .tot-row .v { float: right; font-family: 'DM Mono', monospace; color: var(--ink); }
-    .tot-grand { margin-top: 14px; background: var(--green); color: #fff; padding: 16px 20px; border-radius: 10px; }
-    .tot-grand .lbl-g { float: left; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold-soft); line-height: 28px; }
-    .tot-grand .v-g { float: right; font-family: 'DM Serif Display', serif; font-size: 24px; color: #fff; }
+    .totals { padding: 24px 52px 0; }
+    .tot-grand { background: var(--green); color: #fff; padding: 14px 20px; border-radius: 10px; }
     .bottom { width: 100%; padding: 40px 52px 44px; }
-    .bottom-box { float: left; width: 45%; margin-right: 5%; }
-    .bottom-box:last-child { margin-right: 0; }
     .blk-title { font-size: 10px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--gold); font-weight: 600; margin-bottom: 12px; }
-    .bank-row { width: 100%; font-size: 13px; padding: 7px 0; border-bottom: 1px dotted var(--rule); }
-    .bank-row .bk-l { float: left; color: var(--ink-faint); }
-    .bank-row .bk-v { float: right; font-family: 'DM Mono', monospace; color: var(--ink); }
     .momo-card { margin-top: 14px; background: #faf4e8; border: 1px solid #e7d4a3; border-radius: 9px; padding: 11px 14px; }
     .notes-text { font-size: 12.5px; line-height: 1.7; color: var(--ink-soft); }
     .footer { background: var(--green-deep); color: #ccc; padding: 18px 52px; font-size: 11.5px; }
-    .footer-left { float: left; }
-    .footer-right { float: right; }
-    .footer strong { color: var(--gold-soft); font-weight: 600; }
     .notice { margin: 18px auto 0; text-align: center; font-size: 11.5px; color: var(--ink-faint); }
   </style>
 </head>
@@ -113,21 +93,30 @@ function generateInvoicePDF($invoice_id, $pdo) {
 
   <div class="page">
     <div class="header">
-      <div class="header-top">
-        <div class="brand">
-          <div class="brand-mark">N</div>
-          <div class="brand-text">
-            <div class="brand-name">Namibra Software<br/>Technologies</div>
-            <div class="brand-sub">Limited &nbsp;·&nbsp; namibra.io</div>
-          </div>
-        </div>
-        <div class="doc-title">
-          <h1>INVOICE</h1>
-          <div class="doc-no">No. <?= htmlspecialchars($invoice['invoice_no']) ?></div>
-          <div class="status-badge <?= $status_class ?>"><?= htmlspecialchars($invoice['status']) ?></div>
-        </div>
-        <div class="clear"></div>
-      </div>
+      <table width="100%" cellspacing="0" cellpadding="0">
+        <tr>
+          <td width="60%" valign="top">
+            <table cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="55" valign="top">
+                  <div class="brand-mark">N</div>
+                </td>
+                <td valign="middle" style="padding-left: 12px;">
+                  <div class="brand-name">Namibra Software<br/>Technologies</div>
+                  <div class="brand-sub">Limited &nbsp;·&nbsp; namibra.io</div>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td width="40%" align="right" valign="top">
+            <div class="doc-title">
+              <h1>INVOICE</h1>
+              <div class="doc-no">No. <?= htmlspecialchars($invoice['invoice_no']) ?></div>
+              <div class="status-badge <?= $status_class ?>"><?= htmlspecialchars($invoice['status']) ?></div>
+            </div>
+          </td>
+        </tr>
+      </table>
 
       <table class="meta">
         <tr>
@@ -148,24 +137,27 @@ function generateInvoicePDF($invoice_id, $pdo) {
     </div>
 
     <div class="parties">
-      <div class="party-box">
-        <div class="party-tag">Invoice From</div>
-        <div class="party-name">Namibra Software Technologies LTD</div>
-        <div class="party-info">
-          Westlands, Greater Accra<br/>Ghana<br/>Tel: +233 551 963 210<br/>info@namibra.io &nbsp;·&nbsp; finance@namibra.io<br/>https://namibra.io
-        </div>
-      </div>
-      <div class="party-box" style="float:right;">
-        <div class="party-tag">Bill To</div>
-        <div class="party-name"><?= htmlspecialchars($invoice['bill_to_name']) ?></div>
-        <div class="party-info">
-          <?php if (!empty($invoice['bill_to_email'])) echo htmlspecialchars($invoice['bill_to_email']) . "<br/>"; ?>
-          <?= htmlspecialchars($invoice['bill_to_town_city']) ?><br/>
-          <?= htmlspecialchars($invoice['bill_to_region_country']) ?><br/>
-          Tel: <?= htmlspecialchars($invoice['bill_to_phone']) ?>
-        </div>
-      </div>
-      <div class="clear"></div>
+      <table width="100%" cellspacing="0" cellpadding="0">
+        <tr>
+          <td width="50%" valign="top" style="padding-right: 20px;">
+            <div class="party-tag">Invoice From</div>
+            <div class="party-name">Namibra Software Technologies LTD</div>
+            <div class="party-info">
+              Westlands, Greater Accra<br/>Ghana<br/>Tel: +233 551 963 210<br/>info@namibra.io &nbsp;·&nbsp; finance@namibra.io<br/>https://namibra.io
+            </div>
+          </td>
+          <td width="50%" valign="top" style="padding-left: 20px;">
+            <div class="party-tag">Bill To</div>
+            <div class="party-name"><?= htmlspecialchars($invoice['bill_to_name']) ?></div>
+            <div class="party-info">
+              <?php if (!empty($invoice['bill_to_email'])) echo htmlspecialchars($invoice['bill_to_email']) . "<br/>"; ?>
+              <?= htmlspecialchars($invoice['bill_to_town_city']) ?><br/>
+              <?= htmlspecialchars($invoice['bill_to_region_country']) ?><br/>
+              Tel: <?= htmlspecialchars($invoice['bill_to_phone']) ?>
+            </div>
+          </td>
+        </tr>
+      </table>
     </div>
 
     <div class="table-wrap">
@@ -201,46 +193,82 @@ function generateInvoicePDF($invoice_id, $pdo) {
     </div>
 
     <div class="totals">
-      <div class="totals-box">
-        <div class="tot-row"><span class="lbl-t">Project Amount</span><span class="v"><?= formatCurrencyPDF($invoice['project_amount']) ?></span><div class="clear"></div></div>
-        <div class="tot-grand">
-          <span class="lbl-g">Total Due</span>
-          <span class="v-g"><?= formatCurrencyPDF($invoice['total_due']) ?></span>
-          <div class="clear"></div>
-        </div>
-      </div>
-      <div class="clear"></div>
+      <table width="100%" cellspacing="0" cellpadding="0">
+        <tr>
+          <td width="55%"></td>
+          <td width="45%">
+            <table width="100%" cellspacing="0" cellpadding="0">
+              <tr>
+                <td style="padding: 11px 0; border-bottom: 1px solid var(--rule); font-size: 14px; color: var(--ink-soft);">Project Amount</td>
+                <td align="right" style="padding: 11px 0; border-bottom: 1px solid var(--rule); font-size: 14px; font-family: 'DM Mono', monospace; color: var(--ink);"><?= formatCurrencyPDF($invoice['project_amount']) ?></td>
+              </tr>
+              <tr>
+                <td colspan="2" style="padding-top: 14px;">
+                  <div class="tot-grand">
+                    <table width="100%" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td style="font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold-soft);">Total Due</td>
+                        <td align="right" style="font-family: 'DM Serif Display', serif; font-size: 24px; color: #fff;"><?= formatCurrencyPDF($invoice['total_due']) ?></td>
+                      </tr>
+                    </table>
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
     </div>
 
     <div class="bottom">
-      <div class="bottom-box">
-        <div class="blk-title">Payment Details</div>
-        <div class="bank-row"><span class="bk-l">Account Name</span><span class="bk-v">Namibra Software Technologies LTD</span><div class="clear"></div></div>
-        <div class="bank-row"><span class="bk-l">Bank</span><span class="bk-v">Ecobank Ghana</span><div class="clear"></div></div>
-        <div class="bank-row"><span class="bk-l">Account Number</span><span class="bk-v">1441005162603</span><div class="clear"></div></div>
-        <div class="bank-row"><span class="bk-l">Swift Code</span><span class="bk-v">ECOCGHAC</span><div class="clear"></div></div>
-        <div class="momo-card">
-          <div style="font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--green-soft); font-weight: 700;">MTN Mobile Money</div>
-          <div style="font-family: 'DM Mono', monospace; font-size: 14px; color: var(--ink); margin-top: 2px;">0246 515 614</div>
-          <div style="font-size: 11px; color: var(--ink-faint); margin-top: 1px;">Namibra Software Technologies Ltd</div>
-        </div>
-      </div>
-      <div class="bottom-box">
-        <div class="blk-title">Terms &amp; Notes</div>
-        <div class="notes-text">
-          Payment is due within <strong>14 days</strong> of the invoice date. Late payments attract a
-          <strong>2% monthly</strong> charge on the outstanding balance. All intellectual property rights
-          transfer to the client upon receipt of full payment.<br/><br/>
-          Please reference <strong><?= htmlspecialchars($invoice['invoice_no']) ?></strong> when paying. Enquiries: <strong>finance@namibra.io</strong>.
-        </div>
-      </div>
-      <div class="clear"></div>
+      <table width="100%" cellspacing="0" cellpadding="0">
+        <tr>
+          <td width="48%" valign="top" style="padding-right: 4%;">
+            <div class="blk-title">Payment Details</div>
+            <table width="100%" cellspacing="0" cellpadding="0">
+              <tr>
+                <td style="font-size: 13px; padding: 7px 0; border-bottom: 1px dotted var(--rule); color: var(--ink-faint);">Account Name</td>
+                <td align="right" style="font-size: 13px; padding: 7px 0; border-bottom: 1px dotted var(--rule); font-family: 'DM Mono', monospace; color: var(--ink);">Namibra Software Technologies LTD</td>
+              </tr>
+              <tr>
+                <td style="font-size: 13px; padding: 7px 0; border-bottom: 1px dotted var(--rule); color: var(--ink-faint);">Bank</td>
+                <td align="right" style="font-size: 13px; padding: 7px 0; border-bottom: 1px dotted var(--rule); font-family: 'DM Mono', monospace; color: var(--ink);">Ecobank Ghana</td>
+              </tr>
+              <tr>
+                <td style="font-size: 13px; padding: 7px 0; border-bottom: 1px dotted var(--rule); color: var(--ink-faint);">Account Number</td>
+                <td align="right" style="font-size: 13px; padding: 7px 0; border-bottom: 1px dotted var(--rule); font-family: 'DM Mono', monospace; color: var(--ink);">1441005162603</td>
+              </tr>
+              <tr>
+                <td style="font-size: 13px; padding: 7px 0; border-bottom: 1px dotted var(--rule); color: var(--ink-faint);">Swift Code</td>
+                <td align="right" style="font-size: 13px; padding: 7px 0; border-bottom: 1px dotted var(--rule); font-family: 'DM Mono', monospace; color: var(--ink);">ECOCGHAC</td>
+              </tr>
+            </table>
+            <div class="momo-card">
+              <div style="font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--green-soft); font-weight: 700;">MTN Mobile Money</div>
+              <div style="font-family: 'DM Mono', monospace; font-size: 14px; color: var(--ink); margin-top: 2px;">0246 515 614</div>
+              <div style="font-size: 11px; color: var(--ink-faint); margin-top: 1px;">Namibra Software Technologies Ltd</div>
+            </div>
+          </td>
+          <td width="48%" valign="top">
+            <div class="blk-title">Terms &amp; Notes</div>
+            <div class="notes-text">
+              Payment is due within <strong>14 days</strong> of the invoice date. Late payments attract a
+              <strong>2% monthly</strong> charge on the outstanding balance. All intellectual property rights
+              transfer to the client upon receipt of full payment.<br/><br/>
+              Please reference <strong><?= htmlspecialchars($invoice['invoice_no']) ?></strong> when paying. Enquiries: <strong>finance@namibra.io</strong>.
+            </div>
+          </td>
+        </tr>
+      </table>
     </div>
 
     <div class="footer">
-      <div class="footer-left"><strong>Namibra Software Technologies Ltd</strong> &nbsp;·&nbsp; Westlands, Greater Accra, Ghana</div>
-      <div class="footer-right">info@namibra.io &nbsp;·&nbsp; +233 551 963 210</div>
-      <div class="clear"></div>
+      <table width="100%" cellspacing="0" cellpadding="0">
+        <tr>
+          <td width="60%" style="font-size: 11.5px; color: #ccc;"><strong>Namibra Software Technologies Ltd</strong> &nbsp;·&nbsp; Westlands, Greater Accra, Ghana</td>
+          <td width="40%" align="right" style="font-size: 11.5px; color: #ccc;">info@namibra.io &nbsp;·&nbsp; +233 551 963 210</td>
+        </tr>
+      </table>
     </div>
 
   </div>
