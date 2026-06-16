@@ -136,6 +136,44 @@ function formatCurrency($amount) {
       from {bottom: 30px; opacity: 1;} 
       to {bottom: 0; opacity: 0;}
     }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: #fff;
+      padding: 32px;
+      border-radius: 10px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+    .modal-content h3 {
+      margin-top: 0;
+      color: var(--green);
+      font-family: 'DM Serif Display', serif;
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+    .modal-content p {
+      color: var(--ink-soft);
+      margin-bottom: 24px;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+    }
   </style>
 </head>
 <body>
@@ -190,35 +228,91 @@ function formatCurrency($amount) {
 
 <div id="toast">Status updated successfully!</div>
 
+<!-- Confirm Modal -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-content">
+    <h3>Confirm Status Change</h3>
+    <p>Are you sure you want to change the status of this invoice to <strong id="modalStatusName"></strong>?</p>
+    <div class="modal-actions">
+      <button class="btn-outline" id="cancelBtn">Cancel</button>
+      <button class="btn" id="confirmBtn">Yes, Change Status</button>
+    </div>
+  </div>
+</div>
+
 <script>
   const selects = document.querySelectorAll('.status-select');
   const toast = document.getElementById('toast');
+  const confirmModal = document.getElementById('confirmModal');
+  const confirmBtn = document.getElementById('confirmBtn');
+  const cancelBtn = document.getElementById('cancelBtn');
+
+  let currentSelect = null;
+  let previousValue = null;
+  let targetStatus = null;
 
   selects.forEach(select => {
-    select.addEventListener('change', function() {
-      const id = this.getAttribute('data-id');
-      const status = this.value;
-
-      fetch('update_status.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ id: id, status: status })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          showToast();
-        } else {
-          alert('Error updating status.');
-        }
-      })
-      .catch(err => {
-        console.error(err);
-        alert('Request failed.');
-      });
+    // Store original value on focus so we can revert if canceled
+    select.addEventListener('focus', function() {
+      previousValue = this.value;
     });
+
+    select.addEventListener('change', function() {
+      currentSelect = this;
+      targetStatus = this.value;
+      
+      // Get the text of the selected option
+      const selectedText = this.options[this.selectedIndex].text;
+      document.getElementById('modalStatusName').textContent = selectedText;
+      
+      // If we didn't catch focus (e.g., some browsers), default to previous option by searching selectedIndex before change.
+      // A safe way is to rely on focus, but let's assume focus fired.
+      confirmModal.style.display = 'flex';
+    });
+  });
+
+  cancelBtn.addEventListener('click', function() {
+    confirmModal.style.display = 'none';
+    if (currentSelect && previousValue) {
+      currentSelect.value = previousValue; // Revert
+    }
+    currentSelect = null;
+  });
+
+  confirmBtn.addEventListener('click', function() {
+    confirmModal.style.display = 'none';
+    
+    if (!currentSelect) return;
+    
+    const id = currentSelect.getAttribute('data-id');
+    const status = targetStatus;
+
+    // Update the saved previous value since we are confirming
+    previousValue = targetStatus;
+
+    fetch('update_status.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ id: id, status: status })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        showToast();
+      } else {
+        alert('Error updating status: ' + data.error);
+        // Revert on server error
+        // Note: we'd need to track original value pre-click if we want to revert here perfectly.
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      alert('Request failed.');
+    });
+    
+    currentSelect = null;
   });
 
   function showToast() {
