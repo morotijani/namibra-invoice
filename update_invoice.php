@@ -25,6 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $deposit_status = $_POST['deposit_status'] ?? 'pending';
     $deposit_paid_date = !empty($_POST['deposit_paid_date']) ? $_POST['deposit_paid_date'] : null;
     $balance_remaining = $_POST['balance_remaining'] ?? 0;
+    $balance_status = $_POST['balance_status'] ?? 'pending';
+    $balance_paid_date = !empty($_POST['balance_paid_date']) ? $_POST['balance_paid_date'] : null;
 
     try {
         $pdo->beginTransaction();
@@ -48,7 +50,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 deposit_amount = :deposit_amount,
                 deposit_status = :deposit_status,
                 deposit_paid_date = :deposit_paid_date,
-                balance_remaining = :balance_remaining
+                balance_remaining = :balance_remaining,
+                balance_status = :balance_status,
+                balance_paid_date = :balance_paid_date
             WHERE id = :id
         ");
 
@@ -70,6 +74,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':deposit_status' => $deposit_status,
             ':deposit_paid_date' => $deposit_paid_date,
             ':balance_remaining' => $balance_remaining,
+            ':balance_status' => $balance_status,
+            ':balance_paid_date' => $balance_paid_date,
             ':id' => $invoice_id
         ]);
 

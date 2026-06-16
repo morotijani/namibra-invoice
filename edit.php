@@ -301,7 +301,18 @@ $items = $itemStmt->fetchAll();
         </div>
         <div class="form-group">
           <label>Deposit Paid Date (If Paid)</label>
-          <input type="date" name="deposit_paid_date" value="<?= htmlspecialchars($invoice['deposit_paid_date']) ?>">
+          <input type="date" name="deposit_paid_date" value="<?= htmlspecialchars($invoice['deposit_paid_date'] ?? '') ?>">
+        </div>
+        <div class="form-group">
+          <label>Balance Status</label>
+          <select name="balance_status" id="balanceStatusInput">
+            <option value="pending" <?= ($invoice['balance_status'] ?? 'pending') === 'pending' ? 'selected' : '' ?>>Pending</option>
+            <option value="paid" <?= ($invoice['balance_status'] ?? 'pending') === 'paid' ? 'selected' : '' ?>>Paid</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Balance Paid Date (If Paid)</label>
+          <input type="date" name="balance_paid_date" value="<?= htmlspecialchars($invoice['balance_paid_date'] ?? '') ?>">
         </div>
       </div>
 

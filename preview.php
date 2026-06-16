@@ -729,20 +729,21 @@ $status_class = 'status-' . str_replace(' ', '-', $invoice['status']);
 
     <?php if ($invoice['deposit_status'] === 'paid' && $invoice['deposit_amount'] > 0): ?>
       <div style="margin: 0 52px 24px;">
-        <div
-          style="background: #eff5f2; border: 1px solid #d1e2da; border-radius: 9px; padding: 14px 20px; display: flex; align-items: center; gap: 14px;">
-          <div
-            style="width: 28px; height: 28px; background: var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <div style="background: #eff5f2; border: 1px solid #d1e2da; border-radius: 9px; padding: 14px 20px; display: flex; align-items: center; gap: 14px;">
+          <div style="width: 28px; height: 28px; background: var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
             <svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24" style="width: 16px; height: 16px;">
               <path d="M5 13l4 4L19 7" />
             </svg>
           </div>
           <div style="font-size: 13.5px; color: var(--ink);">
             <strong style="color: var(--green);">Payment received.</strong>
-            A <?= $invoice['deposit_percentage'] ?>% deposit of <?= formatCurrency($invoice['deposit_amount']) ?> was paid
-            on <?= date('d M Y', strtotime($invoice['deposit_paid_date'])) ?>. Thank you.
-            The remaining balance of <?= formatCurrency($invoice['balance_remaining']) ?> is due after completion &amp;
-            delivery.
+            <?php if ($invoice['balance_status'] === 'paid'): ?>
+              The <?= $invoice['deposit_percentage'] ?>% deposit of <?= formatCurrency($invoice['deposit_amount']) ?> was paid on <?= date('d M Y', strtotime($invoice['deposit_paid_date'])) ?>.
+              The final balance of <?= formatCurrency($invoice['balance_remaining']) ?> was paid on <?= date('d M Y', strtotime($invoice['balance_paid_date'])) ?>. <strong style="color: var(--green);">This invoice is fully paid. Thank you!</strong>
+            <?php else: ?>
+              A <?= $invoice['deposit_percentage'] ?>% deposit of <?= formatCurrency($invoice['deposit_amount']) ?> was paid on <?= date('d M Y', strtotime($invoice['deposit_paid_date'])) ?>. Thank you.
+              The remaining balance of <?= formatCurrency($invoice['balance_remaining']) ?> is due after completion &amp; delivery.
+            <?php endif; ?>
           </div>
         </div>
       </div>
@@ -784,11 +785,12 @@ $status_class = 'status-' . str_replace(' ', '-', $invoice['status']);
     <!-- TOTALS -->
     <div class="totals" style="position: relative;">
       <?php if ($invoice['deposit_status'] === 'paid'): ?>
-        <div
-          style="position: absolute; left: 140px; top: 40px; transform: rotate(-15deg); display: inline-block; padding: 10px 20px; border: 3px solid #6b9e78; color: #6b9e78; font-family: 'DM Serif Display', serif; font-size: 28px; letter-spacing: 4px; border-radius: 8px; opacity: 0.8; pointer-events: none;">
-          PAID<br /><span
-            style="font-family: 'DM Sans', sans-serif; font-size: 10px; letter-spacing: 2px; text-align: center; display: block;"><?= $invoice['deposit_percentage'] ?>%
-            DEPOSIT</span>
+        <div style="position: absolute; left: 140px; top: 40px; transform: rotate(-15deg); display: inline-block; padding: 10px 20px; border: 3px solid #6b9e78; color: #6b9e78; font-family: 'DM Serif Display', serif; font-size: 28px; letter-spacing: 4px; border-radius: 8px; opacity: 0.8; pointer-events: none;">
+          <?php if ($invoice['balance_status'] === 'paid'): ?>
+            FULLY PAID<br /><span style="font-family: 'DM Sans', sans-serif; font-size: 10px; letter-spacing: 2px; text-align: center; display: block;">THANK YOU</span>
+          <?php else: ?>
+            PAID<br /><span style="font-family: 'DM Sans', sans-serif; font-size: 10px; letter-spacing: 2px; text-align: center; display: block;"><?= $invoice['deposit_percentage'] ?>% DEPOSIT</span>
+          <?php endif; ?>
         </div>
       <?php endif; ?>
       <div class="totals-box">
@@ -805,10 +807,18 @@ $status_class = 'status-' . str_replace(' ', '-', $invoice['status']);
           <div class="tot-row" style="color: #a0521f;"><span>Deposit Paid
               (<?= $invoice['deposit_percentage'] ?>%)</span><span class="v" style="color: #a0521f;">&minus;
               <?= formatCurrency($invoice['deposit_amount']) ?></span></div>
-          <div class="tot-grand" style="background: var(--green); margin-top: 14px; border-radius: 8px;">
-            <span class="lbl" style="color: var(--gold-soft);">Balance Remaining</span>
-            <span class="v"><?= formatCurrency($invoice['balance_remaining']) ?></span>
-          </div>
+          <?php if ($invoice['balance_status'] === 'paid'): ?>
+            <div class="tot-row" style="color: #a0521f;"><span>Balance Paid</span><span class="v" style="color: #a0521f;">&minus; <?= formatCurrency($invoice['balance_remaining']) ?></span></div>
+            <div class="tot-grand">
+              <span class="lbl">Balance Due</span>
+              <span class="v"><?= formatCurrency(0) ?></span>
+            </div>
+          <?php else: ?>
+            <div class="tot-grand" style="background: var(--green); margin-top: 14px; border-radius: 8px;">
+              <span class="lbl" style="color: var(--gold-soft);">Balance Remaining</span>
+              <span class="v"><?= formatCurrency($invoice['balance_remaining']) ?></span>
+            </div>
+          <?php endif; ?>
         <?php else: ?>
           <div class="tot-grand">
             <span class="lbl">Total Due</span>

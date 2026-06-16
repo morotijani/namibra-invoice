@@ -261,6 +261,17 @@
           <label>Deposit Paid Date (If Paid)</label>
           <input type="date" name="deposit_paid_date">
         </div>
+        <div class="form-group">
+          <label>Balance Status</label>
+          <select name="balance_status" id="balanceStatusInput">
+            <option value="pending">Pending</option>
+            <option value="paid">Paid</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Balance Paid Date (If Paid)</label>
+          <input type="date" name="balance_paid_date">
+        </div>
       </div>
 
       <div class="totals" style="flex-direction: column; align-items: flex-end; font-size: 15px; font-weight: normal; border-top: none;">
