@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invoice — Namibra Software Technologies LTD</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --green:      #0f3d2e;
+      --green-deep: #0a2c20;
+      --green-soft: #1c5440;
+      --gold:       #c9a24b;
+      --gold-soft:  #e7d4a3;
+      --ink:        #14201b;
+      --ink-soft:   #4a5750;
+      --ink-faint:  #8b988f;
+      --rule:       #e4e9e5;
+      --bg:         #f4f6f4;
+      --white:      #ffffff;
+      --cream:      #faf8f2;
+      --shadow:     0 10px 40px rgba(15,61,46,.10), 0 2px 6px rgba(15,61,46,.05);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      padding: 48px 24px;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .page {
+      max-width: 860px;
+      margin: 0 auto;
+      background: var(--white);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      animation: rise .55s cubic-bezier(.22,1,.36,1) both;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .header {
+      background: var(--green);
+      background-image:
+        radial-gradient(120% 140% at 100% 0%, rgba(201,162,75,.18) 0%, transparent 45%),
+        linear-gradient(180deg, var(--green) 0%, var(--green-deep) 100%);
+      color: #fff;
+      padding: 44px 52px 38px;
+      position: relative;
+    }
+    .header::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--gold) 0%, var(--gold-soft) 50%, var(--gold) 100%);
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 28px;
+    }
+
+    .brand { display: flex; align-items: center; gap: 16px; }
+    .brand-mark {
+      width: 52px; height: 52px;
+      border: 1.5px solid var(--gold);
+      border-radius: 11px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'DM Serif Display', serif;
+      font-size: 26px;
+      color: var(--gold-soft);
+      flex-shrink: 0;
+    }
+    .brand-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: 23px;
+      line-height: 1.1;
+      letter-spacing: .2px;
+    }
+    .brand-sub {
+      font-size: 12px;
+      color: var(--gold-soft);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-top: 5px;
+    }
+
+    .doc-title { text-align: right; }
+    .doc-title h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 40px;
+      letter-spacing: 3px;
+      color: var(--gold-soft);
+      line-height: 1;
+    }
+    .doc-title .doc-no {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      color: rgba(255,255,255,.75);
+      margin-top: 8px;
+      letter-spacing: .5px;
+    }
+
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 9px;
+      overflow: hidden;
+      margin-top: 30px;
+    }
+    .meta-cell { background: rgba(255,255,255,.04); padding: 14px 18px; }
+    .meta-cell .lbl {
+      font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase;
+      color: var(--gold-soft);
+    }
+    .meta-cell .val {
+      font-family: 'DM Mono', monospace; font-size: 14px; color: #fff; margin-top: 4px;
+    }
+
+    .parties {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      padding: 40px 52px 8px;
+    }
+    .party-tag {
+      font-size: 10px; letter-spacing: 1.6px; text-transform: uppercase;
+      color: var(--gold); font-weight: 600; margin-bottom: 10px;
+    }
+    .party-name {
+      font-family: 'DM Serif Display', serif; font-size: 18px;
+      color: var(--ink); margin-bottom: 8px;
+    }
+    .party-info { font-size: 13px; line-height: 1.7; color: var(--ink-soft); }
+
+    .table-wrap { padding: 32px 52px 0; }
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      background: var(--cream); font-size: 10px; letter-spacing: 1.3px;
+      text-transform: uppercase; color: var(--green-soft); font-weight: 700;
+      text-align: left; padding: 13px 16px; border-bottom: 2px solid var(--gold);
+    }
+    thead th.num { text-align: right; }
+    tbody td {
+      padding: 17px 16px; font-size: 14px; color: var(--ink);
+      border-bottom: 1px solid var(--rule); vertical-align: top;
+    }
+    tbody td.num { text-align: right; font-family: 'DM Mono', monospace; }
+    .item-desc { font-weight: 500; }
+    .item-note { font-size: 12px; color: var(--ink-faint); margin-top: 3px; }
+
+    .totals { display: flex; justify-content: flex-end; padding: 24px 52px 0; }
+    .totals-box { width: 340px; }
+    .tot-row {
+      display: flex; justify-content: space-between; padding: 11px 0;
+      font-size: 14px; color: var(--ink-soft); border-bottom: 1px solid var(--rule);
+    }
+    .tot-row .v { font-family: 'DM Mono', monospace; color: var(--ink); }
+    .tot-row.credit .v { color: #a0521f; }
+    .tot-grand {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 14px; background: var(--green); color: #fff;
+      padding: 16px 20px; border-radius: 10px;
+    }
+    .tot-grand .lbl {
+      font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold-soft);
+    }
+    .tot-grand .v { font-family: 'DM Serif Display', serif; font-size: 24px; color: #fff; }
+
+    .bottom {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 36px; padding: 40px 52px 44px;
+    }
+    .blk-title {
+      font-size: 10px; letter-spacing: 1.6px; text-transform: uppercase;
+      color: var(--gold); font-weight: 600; margin-bottom: 12px;
+    }
+    .bank-row {
+      display: flex; justify-content: space-between; font-size: 13px;
+      padding: 7px 0; border-bottom: 1px dotted var(--rule);
+    }
+    .bank-row .bk-l { color: var(--ink-faint); }
+    .bank-row .bk-v { font-family: 'DM Mono', monospace; color: var(--ink); }
+    .momo-card {
+      display: flex; align-items: center; gap: 12px; margin-top: 14px;
+      background: rgba(201,162,75,.10); border: 1px solid rgba(201,162,75,.30);
+      border-radius: 9px; padding: 11px 14px;
+    }
+    .momo-card .mc-icon {
+      width: 30px; height: 30px; flex-shrink: 0; background: var(--gold);
+      border-radius: 7px; display: flex; align-items: center; justify-content: center;
+    }
+    .momo-card .mc-icon svg { width: 16px; height: 16px; stroke: #fff; }
+    .momo-card .mc-title { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--green-soft); font-weight: 700; }
+    .momo-card .mc-num { font-family: 'DM Mono', monospace; font-size: 14px; color: var(--ink); margin-top: 2px; }
+    .momo-card .mc-name { font-size: 11px; color: var(--ink-faint); margin-top: 1px; }
+    .notes-text { font-size: 12.5px; line-height: 1.7; color: var(--ink-soft); }
+
+    .footer {
+      background: var(--green-deep); color: rgba(255,255,255,.78);
+      padding: 18px 52px; display: flex; justify-content: space-between;
+      flex-wrap: wrap; gap: 8px; font-size: 11.5px;
+    }
+    .footer strong { color: var(--gold-soft); font-weight: 600; }
+
+    .notice {
+      max-width: 860px; margin: 18px auto 0; display: flex;
+      align-items: center; gap: 9px; font-size: 11.5px; color: var(--ink-faint);
+      justify-content: center;
+    }
+    .notice svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+    @media print {
+      body { padding: 0; background: #fff; min-height: 0; }
+      .page { box-shadow: none; border-radius: 0; animation: none; }
+      .notice { margin-top: 10px; font-size: 10px; }
+    }
+    @media (max-width: 640px) {
+      .header-top { flex-direction: column; }
+      .doc-title { text-align: left; }
+      .meta, .parties, .bottom { grid-template-columns: 1fr; }
+      .header, .parties, .table-wrap, .totals, .bottom, .footer { padding-left: 26px; padding-right: 26px; }
+      .totals-box { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- HEADER -->
+    <div class="header">
+      <div class="header-top">
+        <div class="brand">
+          <div class="brand-mark">N</div>
+          <div class="brand-text">
+            <div class="brand-name">Namibra Software<br/>Technologies</div>
+            <div class="brand-sub">Limited &nbsp;·&nbsp; namibra.io</div>
+          </div>
+        </div>
+        <div class="doc-title">
+          <h1>INVOICE</h1>
+          <div class="doc-no">No. NST-2026-0054</div>
+        </div>
+      </div>
+
+      <div class="meta">
+        <div class="meta-cell">
+          <div class="lbl">Issue Date</div>
+          <div class="val">08 Jun 2026</div>
+        </div>
+        <div class="meta-cell">
+          <div class="lbl">Due Date</div>
+          <div class="val">22 Jun 2026</div>
+        </div>
+        <div class="meta-cell">
+          <div class="lbl">Total Due</div>
+          <div class="val">GH₵ 7,000.00</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PARTIES -->
+    <div class="parties">
+      <div>
+        <div class="party-tag">Invoice From</div>
+        <div class="party-name">Namibra Software Technologies LTD</div>
+        <div class="party-info">
+          Westlands, Greater Accra<br/>
+          Ghana<br/>
+          Tel: +233 551 963 210<br/>
+          info@namibra.io &nbsp;·&nbsp; finance@namibra.io<br/>
+          https://namibra.io
+        </div>
+      </div>
+      <div>
+        <div class="party-tag">Bill To</div>
+        <div class="party-name">Porche's Kiddy Mall</div>
+        <div class="party-info">
+          Adum, Kumasi<br/>
+          Ashanti Region, Ghana<br/>
+          Tel: +233 54 303 3637
+        </div>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:58%;">Description</th>
+            <th class="num">Qty</th>
+            <th class="num">Rate</th>
+            <th class="num">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="item-desc">Retail Website</div>
+              <div class="item-note">Customer-facing online storefront with catalogue, cart &amp; checkout</div>
+            </td>
+            <td class="num">1</td>
+            <td class="num">—</td>
+            <td class="num">—</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="item-desc">Wholesale Website</div>
+              <div class="item-note">B2B e-commerce site with bulk ordering, tiered pricing &amp; account management</div>
+            </td>
+            <td class="num">1</td>
+            <td class="num">—</td>
+            <td class="num">—</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="item-desc">Walk-in Software (Inventory &amp; POS)</div>
+              <div class="item-note">In-store point-of-sale with inventory management, counter sales, receipts &amp; daily reconciliation</div>
+            </td>
+            <td class="num">1</td>
+            <td class="num">—</td>
+            <td class="num">—</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="item-desc">Integrated System — Total</div>
+              <div class="item-note">Design, development, deployment &amp; training for the combined solution</div>
+            </td>
+            <td class="num"></td>
+            <td class="num"></td>
+            <td class="num">GH₵ 7,000.00</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- TOTALS -->
+    <div class="totals">
+      <div class="totals-box">
+        <div class="tot-row"><span>Project Amount</span><span class="v">GH₵ 7,000.00</span></div>
+        <div class="tot-grand">
+          <span class="lbl">Total Due</span>
+          <span class="v">GH₵ 7,000.00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM GRID -->
+    <div class="bottom">
+      <div>
+        <div class="blk-title">Payment Details</div>
+        <div class="bank-row"><span class="bk-l">Account Name</span><span class="bk-v">Namibra Software Technologies LTD</span></div>
+        <div class="bank-row"><span class="bk-l">Bank</span><span class="bk-v">Ecobank Ghana</span></div>
+        <div class="bank-row"><span class="bk-l">Account Number</span><span class="bk-v">1441005162603</span></div>
+        <div class="bank-row"><span class="bk-l">Swift Code</span><span class="bk-v">ECOCGHAC</span></div>
+        <div class="momo-card">
+          <div class="mc-icon">
+            <svg fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+          </div>
+          <div>
+            <div class="mc-title">MTN Mobile Money</div>
+            <div class="mc-num">0246 515 614</div>
+            <div class="mc-name">Namibra Software Technologies Ltd</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="blk-title">Terms &amp; Notes</div>
+        <div class="notes-text">
+          This invoice covers the retail website, wholesale website and walk-in software (inventory &amp; POS),
+          billed together as a package.<br/><br/>
+          Payment is due within <strong>14 days</strong> of the invoice date. Late payments attract a
+          <strong>2% monthly</strong> charge on the outstanding balance. All intellectual property rights
+          transfer to the client upon receipt of full payment.<br/><br/>
+          Please reference <strong>NST-2026-0054</strong> when paying. Enquiries: <strong>finance@namibra.io</strong>.
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <div><strong>Namibra Software Technologies Ltd</strong> &nbsp;·&nbsp; Westlands, Greater Accra, Ghana</div>
+      <div>info@namibra.io &nbsp;·&nbsp; +233 551 963 210</div>
+    </div>
+
+  </div>
+
+  <div class="notice">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/>
+    </svg>
+    This is a computer-generated invoice and is valid without a physical signature.
+  </div>
+</body>
+</html>
