@@ -1,4 +1,5 @@
 <?php
+session_start();
 require 'config.php';
 
 if (!isset($_GET['id'])) {
@@ -295,11 +296,39 @@ $status_class = 'status-' . str_replace(' ', '-', $invoice['status']);
     }
     .footer strong { color: var(--gold-soft); font-weight: 600; }
 
-    .notice {
-      max-width: 860px; margin: 18px auto 0; display: flex;
-      align-items: center; gap: 9px; font-size: 11.5px; color: var(--ink-faint);
+    .notice { margin: 18px auto 0; text-align: center; font-size: 11.5px; color: var(--ink-faint); }
+    
+    /* Preloader Styles */
+    .preloader-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(255, 255, 255, 0.9);
+      z-index: 9999;
+      display: none;
+      align-items: center;
       justify-content: center;
+      flex-direction: column;
     }
+    .spinner {
+      border: 4px solid var(--rule);
+      border-top: 4px solid var(--green);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 16px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .preloader-text {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      color: var(--green);
+      font-size: 16px;
+    }
+
     .notice svg { width: 15px; height: 15px; flex-shrink: 0; }
 
     @media print {
@@ -319,6 +348,12 @@ $status_class = 'status-' . str_replace(' ', '-', $invoice['status']);
 </head>
 <body>
 
+  <!-- Preloader -->
+  <div class="preloader-overlay" id="preloader">
+    <div class="spinner"></div>
+    <div class="preloader-text">Sending notifications... Please wait.</div>
+  </div>
+
   <!-- ACTION BAR -->
   <div class="action-bar">
     <div class="left-acts">
@@ -327,7 +362,14 @@ $status_class = 'status-' . str_replace(' ', '-', $invoice['status']);
         Create New
       </a>
     </div>
-    <a href="download_pdf.php?id=<?= $invoice_id ?>" class="btn-pdf">Download PDF</a>
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <?php if (isset($_SESSION['notify_msg'])): ?>
+        <span style="color: var(--green); font-size: 13px; font-weight: 600;"><?= htmlspecialchars($_SESSION['notify_msg']) ?></span>
+        <?php unset($_SESSION['notify_msg']); ?>
+      <?php endif; ?>
+      <a href="send_initial.php?id=<?= $invoice_id ?>" class="btn-pdf" id="sendBtn" style="background: var(--gold); color: #fff;">Send to Customer</a>
+      <a href="download_pdf.php?id=<?= $invoice_id ?>" class="btn-pdf">Download PDF</a>
+    </div>
   </div>
 
   <div class="page">
@@ -476,5 +518,11 @@ $status_class = 'status-' . str_replace(' ', '-', $invoice['status']);
     </svg>
     This is a computer-generated invoice and is valid without a physical signature.
   </div>
+
+  <script>
+    document.getElementById('sendBtn').addEventListener('click', function(e) {
+      document.getElementById('preloader').style.display = 'flex';
+    });
+  </script>
 </body>
 </html>

@@ -6,6 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $due_date = $_POST['due_date'] ?? '';
     $status = $_POST['status'] ?? 'new';
     $bill_to_name = $_POST['bill_to_name'] ?? '';
+    $bill_to_email = $_POST['bill_to_email'] ?? '';
     $bill_to_town_city = $_POST['bill_to_town_city'] ?? '';
     $bill_to_region_country = $_POST['bill_to_region_country'] ?? '';
     $bill_to_phone = $_POST['bill_to_phone'] ?? '';
@@ -18,9 +19,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // 1. Insert main invoice record with a temporary invoice_no
         $stmt = $pdo->prepare("
             INSERT INTO invoices 
-            (invoice_no, issue_date, due_date, status, bill_to_name, bill_to_town_city, bill_to_region_country, bill_to_phone, project_amount, total_due) 
+            (invoice_no, issue_date, due_date, status, bill_to_name, bill_to_email, bill_to_town_city, bill_to_region_country, bill_to_phone, project_amount, total_due) 
             VALUES 
-            ('TEMP', :issue_date, :due_date, :status, :bill_name, :bill_town, :bill_region, :bill_phone, :project_amount, :total_due)
+            ('TEMP', :issue_date, :due_date, :status, :bill_name, :bill_email, :bill_town, :bill_region, :bill_phone, :project_amount, :total_due)
         ");
 
         $stmt->execute([
@@ -28,6 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':due_date' => $due_date,
             ':status' => $status,
             ':bill_name' => $bill_to_name,
+            ':bill_email' => $bill_to_email,
             ':bill_town' => $bill_to_town_city,
             ':bill_region' => $bill_to_region_country,
             ':bill_phone' => $bill_to_phone,

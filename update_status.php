@@ -14,6 +14,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
                 $stmt = $pdo->prepare("UPDATE invoices SET status = :status WHERE id = :id");
                 $stmt->execute([':status' => $status, ':id' => $id]);
+                
+                // Trigger Notifications
+                require_once 'notifier.php';
+                sendInvoiceEmail($id, $pdo, "Invoice Status Updated", "The status of your invoice has been updated to: " . strtoupper($status));
+                sendInvoiceSMS($id, $pdo, 'status_update');
+
                 echo json_encode(['success' => true]);
                 exit;
             } catch (PDOException $e) {

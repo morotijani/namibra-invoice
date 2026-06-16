@@ -162,8 +162,6 @@
       <a href="invoices.php" class="btn btn-outline" style="text-decoration: none;">View All Invoices</a>
     </div>
 
-    <h1>Create New Invoice</h1>
-
     <form action="save_invoice.php" method="POST">
 
       <h3>Invoice Details</h3>
@@ -193,6 +191,10 @@
         <div class="form-group">
           <label>Client / Company Name</label>
           <input type="text" name="bill_to_name" required placeholder="e.g. Porche's Kiddy Mall">
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" name="bill_to_email" placeholder="e.g. client@example.com">
         </div>
         <div class="form-group">
           <label>Town / City</label>
