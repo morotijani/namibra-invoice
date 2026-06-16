@@ -40,6 +40,12 @@
     h1 {
       font-family: 'DM Serif Display', serif;
       color: var(--green);
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       margin-bottom: 24px;
     }
 
@@ -112,6 +118,7 @@
       font-weight: 600;
       cursor: pointer;
       font-size: 15px;
+      font-family: 'DM Sans', sans-serif;
     }
 
     .btn:hover {
@@ -151,13 +158,27 @@
       padding-top: 20px;
       border-top: 2px solid var(--rule);
     }
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      body { padding: 20px 10px; }
+      .container { padding: 30px 20px; }
+      .header { flex-direction: column; align-items: flex-start; gap: 15px; }
+      .header .btn-outline { align-self: flex-start; }
+      .grid-2 { grid-template-columns: 1fr; gap: 16px; }
+      .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 20px; }
+      table.items { min-width: 600px; }
+      .bottom-actions { flex-direction: column; gap: 10px; margin-top: 20px; }
+      .bottom-actions .btn, .bottom-actions .btn-outline { width: 100%; text-align: center; justify-content: center; }
+      .totals { align-items: stretch !important; }
+      .tot-row, .tot-grand { width: 100%; justify-content: space-between; }
+    }
   </style>
 </head>
 
 <body>
 
   <div class="container">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+    <div class="header">
       <h1>Create New Invoice</h1>
       <a href="invoices.php" class="btn btn-outline" style="text-decoration: none;">View All Invoices</a>
     </div>
@@ -211,17 +232,18 @@
       </div>
 
       <h3>Items</h3>
-      <table id="itemsTable">
+      <div class="table-responsive">
+      <table class="items" id="itemsTable">
         <thead>
           <tr>
-            <th style="width: 50%">Description & Note</th>
-            <th style="width: 10%">Qty</th>
-            <th style="width: 15%">Rate (GH₵)</th>
-            <th style="width: 15%">Amount (GH₵)</th>
-            <th style="width: 10%">Action</th>
+            <th style="width: 45%;">Description</th>
+            <th style="width: 15%;">Quantity</th>
+            <th style="width: 20%;">Rate (GH₵)</th>
+            <th style="width: 15%;">Amount</th>
+            <th style="width: 5%;"></th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="itemsBody">
           <tr>
             <td>
               <input type="text" name="item_desc[]" placeholder="Item Name" required
@@ -237,6 +259,7 @@
           </tr>
         </tbody>
       </table>
+      </div>
 
       <button type="button" class="btn btn-outline" id="addRowBtn">+ Add Row</button>
 

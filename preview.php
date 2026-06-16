@@ -603,34 +603,32 @@ $status_class = 'status-' . str_replace(' ', '-', $invoice['status']);
       }
     }
 
-    @media (max-width: 640px) {
-      .header-top {
-        flex-direction: column;
-      }
-
-      .doc-title {
-        text-align: left;
-      }
-
-      .meta,
-      .parties,
-      .bottom {
-        grid-template-columns: 1fr;
-      }
-
-      .header,
-      .parties,
-      .table-wrap,
-      .totals,
-      .bottom,
-      .footer {
-        padding-left: 26px;
-        padding-right: 26px;
-      }
-
-      .totals-box {
-        width: 100%;
-      }
+    @media (max-width: 768px) {
+      body { padding: 15px 10px; }
+      .action-bar { flex-direction: column; gap: 16px; padding: 15px; }
+      .action-bar .left-acts { flex-wrap: wrap; justify-content: center; width: 100%; gap: 15px; }
+      .action-bar > div:last-child { width: 100%; justify-content: center; flex-wrap: wrap; }
+      .page { border-radius: 8px; }
+      
+      .header-top { flex-direction: column; gap: 20px; }
+      .doc-title { text-align: left; }
+      .doc-title h1 { font-size: 32px; }
+      
+      .meta, .parties, .bottom { grid-template-columns: 1fr; }
+      .parties { gap: 25px; }
+      
+      .header, .parties, .table-wrap, .totals, .bottom, .footer { padding-left: 20px; padding-right: 20px; }
+      
+      .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-top: 20px; }
+      table { min-width: 600px; }
+      
+      .totals { justify-content: flex-start; padding-top: 15px; }
+      .totals-box { width: 100%; }
+      
+      .footer { flex-direction: column; text-align: center; justify-content: center; }
+      .footer > td { width: 100%; text-align: center; }
+      
+      .payment-schedule-box { margin-left: 20px !important; margin-right: 20px !important; overflow-x: auto; }
     }
   </style>
 </head>
@@ -829,9 +827,8 @@ $status_class = 'status-' . str_replace(' ', '-', $invoice['status']);
     </div>
 
     <?php if ($invoice['deposit_percentage'] > 0 && $invoice['deposit_percentage'] < 100): ?>
-      <div
-        style="margin: 0 52px 40px; margin-top: 40px; background: #faf8f2; border: 1px solid var(--rule); border-radius: 10px; overflow: hidden;">
-        <table style="width: 100%; border-collapse: collapse;">
+      <div class="payment-schedule-box" style="margin: 40px 52px 40px; background: #faf8f2; border: 1px solid var(--rule); border-radius: 10px; overflow: hidden;">
+        <table style="width: 100%; border-collapse: collapse; min-width: 500px;">
           <thead>
             <tr>
               <th

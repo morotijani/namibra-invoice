@@ -92,6 +92,7 @@ function formatCurrency($amount) {
       cursor: pointer;
       font-size: 14px;
       text-decoration: none;
+      font-family: 'DM Sans', sans-serif;
     }
     .btn:hover { background: var(--green-deep); }
     .btn-outline {
@@ -102,8 +103,17 @@ function formatCurrency($amount) {
       border-radius: 4px;
       font-size: 12px;
       text-decoration: none;
+      display: inline-block;
+      white-space: nowrap;
+      font-family: 'DM Sans', sans-serif;
     }
     .btn-outline:hover { background: var(--gold); color: var(--white); }
+    
+    .btn-edit {
+      border-color: var(--green);
+      color: var(--green);
+    }
+    .btn-edit:hover { background: var(--green); color: var(--white); }
     
     .controls {
       display: flex;
@@ -157,6 +167,24 @@ function formatCurrency($amount) {
       background: var(--green);
       color: var(--white);
       border-color: var(--green);
+    }
+    
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      body { padding: 20px 10px; }
+      .container { padding: 30px 20px; }
+      .header-bar { flex-direction: column; align-items: flex-start; gap: 15px; }
+      .controls { flex-direction: column; align-items: stretch; gap: 10px; padding: 15px; }
+      .controls > div { flex-wrap: wrap; justify-content: space-between; width: 100%; }
+      .search-input { width: 100% !important; flex-grow: 1; margin-bottom: 10px; }
+      .filter-select { flex-grow: 1; }
+      table { min-width: 800px; }
     }
     
     table {
@@ -290,6 +318,7 @@ function formatCurrency($amount) {
     </div>
   </form>
   
+  <div class="table-wrapper">
   <table>
     <thead>
       <tr>
@@ -325,14 +354,17 @@ function formatCurrency($amount) {
             </select>
           </td>
           <td>
-            <a href="edit.php?id=<?= $inv['id'] ?>" class="btn-outline" style="border-color: var(--green); color: var(--green); margin-right: 4px;">Edit</a>
-            <a href="preview.php?id=<?= $inv['id'] ?>" class="btn-outline">View / PDF</a>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+              <a href="edit.php?id=<?= $inv['id'] ?>" class="btn-outline btn-edit">Edit</a>
+              <a href="preview.php?id=<?= $inv['id'] ?>" class="btn-outline">View / PDF</a>
+            </div>
           </td>
         </tr>
         <?php endforeach; ?>
       <?php endif; ?>
     </tbody>
   </table>
+  </div>
 
   <?php if ($total_pages > 1): ?>
   <div class="pagination">
