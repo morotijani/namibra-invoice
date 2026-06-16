@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Create Invoice — Namibra Software</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
   <style>
     :root {
       --green: #0f3d2e;
@@ -17,36 +20,42 @@
       --ink-soft: #4a5750;
       --danger: #d9534f;
     }
+
     body {
       font-family: 'DM Sans', sans-serif;
       background: var(--bg);
       color: var(--ink);
       padding: 40px 20px;
     }
+
     .container {
       max-width: 900px;
       margin: 0 auto;
       background: var(--white);
       padding: 40px;
       border-radius: 12px;
-      box-shadow: 0 10px 40px rgba(15,61,46,.10);
+      box-shadow: 0 10px 40px rgba(15, 61, 46, .10);
     }
+
     h1 {
       font-family: 'DM Serif Display', serif;
       color: var(--green);
       margin-bottom: 24px;
     }
+
     .grid-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 20px;
       margin-bottom: 20px;
     }
+
     .form-group {
       display: flex;
       flex-direction: column;
       margin-bottom: 16px;
     }
+
     label {
       font-size: 13px;
       font-weight: 600;
@@ -55,23 +64,31 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-    input, select, textarea {
+
+    input,
+    select,
+    textarea {
       padding: 12px;
       border: 1px solid var(--rule);
       border-radius: 6px;
       font-family: 'DM Sans', sans-serif;
       font-size: 15px;
     }
-    input:focus, select:focus, textarea:focus {
+
+    input:focus,
+    select:focus,
+    textarea:focus {
       outline: none;
       border-color: var(--gold);
     }
+
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
       margin-bottom: 20px;
     }
+
     th {
       text-align: left;
       background: var(--bg);
@@ -80,10 +97,12 @@
       text-transform: uppercase;
       color: var(--green);
     }
+
     td {
       padding: 10px;
       border-bottom: 1px solid var(--rule);
     }
+
     .btn {
       padding: 12px 24px;
       border: none;
@@ -94,16 +113,35 @@
       cursor: pointer;
       font-size: 15px;
     }
-    .btn:hover { background: var(--green-deep); }
+
+    .btn:hover {
+      background: var(--green-deep);
+    }
+
     .btn-outline {
       background: transparent;
       border: 1px solid var(--gold);
       color: var(--gold);
     }
-    .btn-outline:hover { background: var(--gold); color: var(--white); }
-    .btn-danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 8px 16px; font-size: 13px;}
-    .btn-danger:hover { background: var(--danger); color: var(--white); }
-    
+
+    .btn-outline:hover {
+      background: var(--gold);
+      color: var(--white);
+    }
+
+    .btn-danger {
+      background: transparent;
+      color: var(--danger);
+      border: 1px solid var(--danger);
+      padding: 8px 16px;
+      font-size: 13px;
+    }
+
+    .btn-danger:hover {
+      background: var(--danger);
+      color: var(--white);
+    }
+
     .totals {
       display: flex;
       justify-content: flex-end;
@@ -115,127 +153,133 @@
     }
   </style>
 </head>
+
 <body>
 
-<div class="container">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+  <div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+      <h1>Create New Invoice</h1>
+      <a href="invoices.php" class="btn btn-outline" style="text-decoration: none;">View All Invoices</a>
+    </div>
+
     <h1>Create New Invoice</h1>
-    <a href="invoices.php" class="btn btn-outline" style="text-decoration: none;">View All Invoices</a>
+
+    <form action="save_invoice.php" method="POST">
+
+      <h3>Invoice Details</h3>
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Issue Date</label>
+          <input type="date" name="issue_date" required value="<?php echo date('Y-m-d'); ?>">
+        </div>
+        <div class="form-group">
+          <label>Due Date</label>
+          <input type="date" name="due_date" required value="<?php echo date('Y-m-d', strtotime('+14 days')); ?>">
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select name="status" required>
+            <option value="new">New</option>
+            <option value="pending">Pending</option>
+            <option value="partial payment">Partial Payment</option>
+            <option value="full paid">Full Paid</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+      </div>
+
+      <h3>Bill To</h3>
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Client / Company Name</label>
+          <input type="text" name="bill_to_name" required placeholder="e.g. Porche's Kiddy Mall">
+        </div>
+        <div class="form-group">
+          <label>Town / City</label>
+          <input type="text" name="bill_to_town_city" required placeholder="e.g. Adum, Kumasi">
+        </div>
+        <div class="form-group">
+          <label>Region / State, Country</label>
+          <input type="text" name="bill_to_region_country" required placeholder="e.g. Ashanti Region, Ghana">
+        </div>
+        <div class="form-group">
+          <label>Telephone Number</label>
+          <input type="text" name="bill_to_phone" required placeholder="e.g. +233 54 303 3637">
+        </div>
+      </div>
+
+      <h3>Items</h3>
+      <table id="itemsTable">
+        <thead>
+          <tr>
+            <th style="width: 50%">Description & Note</th>
+            <th style="width: 10%">Qty</th>
+            <th style="width: 15%">Rate (GH₵)</th>
+            <th style="width: 15%">Amount (GH₵)</th>
+            <th style="width: 10%">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <input type="text" name="item_desc[]" placeholder="Item Name" required
+                style="width: 100%; margin-bottom: 5px;">
+              <input type="text" name="item_note[]" placeholder="Item note (optional)"
+                style="width: 100%; font-size: 13px;">
+            </td>
+            <td><input type="number" name="item_qty[]" value="1" min="1" class="qty" required style="width: 100%"></td>
+            <td><input type="number" name="item_rate[]" value="0" step="0.01" min="0" class="rate" required
+                style="width: 100%"></td>
+            <td><input type="text" class="amount" value="0.00" readonly style="width: 100%; background: #eee;"></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <button type="button" class="btn btn-outline" id="addRowBtn">+ Add Row</button>
+
+      <div class="totals">
+        Total Due: &nbsp;GH₵ <span id="grandTotal">0.00</span>
+      </div>
+
+      <input type="hidden" name="project_amount" id="project_amount_input" value="0">
+      <input type="hidden" name="total_due" id="total_due_input" value="0">
+
+      <div style="margin-top: 40px; text-align: right;">
+        <button type="submit" class="btn">Save & Preview Invoice</button>
+      </div>
+    </form>
+
   </div>
-  
-  <form action="save_invoice.php" method="POST">
-    
-    <h3>Invoice Details</h3>
-    <div class="grid-2">
-      <div class="form-group">
-        <label>Issue Date</label>
-        <input type="date" name="issue_date" required value="<?php echo date('Y-m-d'); ?>">
-      </div>
-      <div class="form-group">
-        <label>Due Date</label>
-        <input type="date" name="due_date" required value="<?php echo date('Y-m-d', strtotime('+14 days')); ?>">
-      </div>
-      <div class="form-group">
-        <label>Status</label>
-        <select name="status" required>
-          <option value="new">New</option>
-          <option value="pending">Pending</option>
-          <option value="partial payment">Partial Payment</option>
-          <option value="full paid">Full Paid</option>
-          <option value="completed">Completed</option>
-        </select>
-      </div>
-    </div>
 
-    <h3>Bill To</h3>
-    <div class="grid-2">
-      <div class="form-group">
-        <label>Client / Company Name</label>
-        <input type="text" name="bill_to_name" required placeholder="e.g. Porche's Kiddy Mall">
-      </div>
-      <div class="form-group">
-        <label>Town / City</label>
-        <input type="text" name="bill_to_town_city" required placeholder="e.g. Adum, Kumasi">
-      </div>
-      <div class="form-group">
-        <label>Region / State, Country</label>
-        <input type="text" name="bill_to_region_country" required placeholder="e.g. Ashanti Region, Ghana">
-      </div>
-      <div class="form-group">
-        <label>Telephone Number</label>
-        <input type="text" name="bill_to_phone" required placeholder="e.g. +233 54 303 3637">
-      </div>
-    </div>
+  <script>
+    const tableBody = document.querySelector('#itemsTable tbody');
+    const addRowBtn = document.getElementById('addRowBtn');
+    const grandTotalSpan = document.getElementById('grandTotal');
+    const projectAmountInput = document.getElementById('project_amount_input');
+    const totalDueInput = document.getElementById('total_due_input');
 
-    <h3>Items</h3>
-    <table id="itemsTable">
-      <thead>
-        <tr>
-          <th style="width: 50%">Description & Note</th>
-          <th style="width: 10%">Qty</th>
-          <th style="width: 15%">Rate (GH₵)</th>
-          <th style="width: 15%">Amount (GH₵)</th>
-          <th style="width: 10%">Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>
-            <input type="text" name="item_desc[]" placeholder="Item Name" required style="width: 100%; margin-bottom: 5px;">
-            <input type="text" name="item_note[]" placeholder="Item note (optional)" style="width: 100%; font-size: 13px;">
-          </td>
-          <td><input type="number" name="item_qty[]" value="1" min="1" class="qty" required style="width: 100%"></td>
-          <td><input type="number" name="item_rate[]" value="0" step="0.01" min="0" class="rate" required style="width: 100%"></td>
-          <td><input type="text" class="amount" value="0.00" readonly style="width: 100%; background: #eee;"></td>
-          <td></td>
-        </tr>
-      </tbody>
-    </table>
-    
-    <button type="button" class="btn btn-outline" id="addRowBtn">+ Add Row</button>
+    function calculateTotals() {
+      let grandTotal = 0;
+      const rows = tableBody.querySelectorAll('tr');
 
-    <div class="totals">
-      Total Due: &nbsp;GH₵ <span id="grandTotal">0.00</span>
-    </div>
-    
-    <input type="hidden" name="project_amount" id="project_amount_input" value="0">
-    <input type="hidden" name="total_due" id="total_due_input" value="0">
+      rows.forEach(row => {
+        const qty = parseFloat(row.querySelector('.qty').value) || 0;
+        const rate = parseFloat(row.querySelector('.rate').value) || 0;
+        const amount = qty * rate;
 
-    <div style="margin-top: 40px; text-align: right;">
-      <button type="submit" class="btn">Save & Preview Invoice</button>
-    </div>
-  </form>
+        row.querySelector('.amount').value = amount.toFixed(2);
+        grandTotal += amount;
+      });
 
-</div>
+      grandTotalSpan.textContent = grandTotal.toFixed(2);
+      projectAmountInput.value = grandTotal.toFixed(2);
+      totalDueInput.value = grandTotal.toFixed(2);
+    }
 
-<script>
-  const tableBody = document.querySelector('#itemsTable tbody');
-  const addRowBtn = document.getElementById('addRowBtn');
-  const grandTotalSpan = document.getElementById('grandTotal');
-  const projectAmountInput = document.getElementById('project_amount_input');
-  const totalDueInput = document.getElementById('total_due_input');
-
-  function calculateTotals() {
-    let grandTotal = 0;
-    const rows = tableBody.querySelectorAll('tr');
-    
-    rows.forEach(row => {
-      const qty = parseFloat(row.querySelector('.qty').value) || 0;
-      const rate = parseFloat(row.querySelector('.rate').value) || 0;
-      const amount = qty * rate;
-      
-      row.querySelector('.amount').value = amount.toFixed(2);
-      grandTotal += amount;
-    });
-
-    grandTotalSpan.textContent = grandTotal.toFixed(2);
-    projectAmountInput.value = grandTotal.toFixed(2);
-    totalDueInput.value = grandTotal.toFixed(2);
-  }
-
-  addRowBtn.addEventListener('click', () => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
+    addRowBtn.addEventListener('click', () => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
       <td>
         <input type="text" name="item_desc[]" placeholder="Item Name" required style="width: 100%; margin-bottom: 5px;">
         <input type="text" name="item_note[]" placeholder="Item note (optional)" style="width: 100%; font-size: 13px;">
@@ -245,22 +289,23 @@
       <td><input type="text" class="amount" value="0.00" readonly style="width: 100%; background: #eee;"></td>
       <td><button type="button" class="btn-danger removeRowBtn">X</button></td>
     `;
-    tableBody.appendChild(tr);
-  });
+      tableBody.appendChild(tr);
+    });
 
-  tableBody.addEventListener('input', (e) => {
-    if (e.target.classList.contains('qty') || e.target.classList.contains('rate')) {
-      calculateTotals();
-    }
-  });
+    tableBody.addEventListener('input', (e) => {
+      if (e.target.classList.contains('qty') || e.target.classList.contains('rate')) {
+        calculateTotals();
+      }
+    });
 
-  tableBody.addEventListener('click', (e) => {
-    if (e.target.classList.contains('removeRowBtn')) {
-      e.target.closest('tr').remove();
-      calculateTotals();
-    }
-  });
+    tableBody.addEventListener('click', (e) => {
+      if (e.target.classList.contains('removeRowBtn')) {
+        e.target.closest('tr').remove();
+        calculateTotals();
+      }
+    });
 
-</script>
+  </script>
 </body>
+
 </html>
