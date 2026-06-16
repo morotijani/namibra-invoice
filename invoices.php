@@ -1,7 +1,38 @@
 <?php
 require 'config.php';
 
-$stmt = $pdo->query("SELECT * FROM invoices ORDER BY id DESC");
+$search = $_GET['search'] ?? '';
+$status_filter = $_GET['status'] ?? '';
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+if ($page < 1) $page = 1;
+$limit = 10;
+$offset = ($page - 1) * $limit;
+
+$where = [];
+$params = [];
+
+if ($search !== '') {
+    $where[] = "(bill_to_name LIKE :search_name OR invoice_no LIKE :search_no)";
+    $params[':search_name'] = "%$search%";
+    $params[':search_no'] = "%$search%";
+}
+
+if ($status_filter !== '') {
+    $where[] = "status = :status";
+    $params[':status'] = $status_filter;
+}
+
+$whereClause = !empty($where) ? "WHERE " . implode(' AND ', $where) : "";
+
+// Count total
+$countStmt = $pdo->prepare("SELECT COUNT(*) FROM invoices $whereClause");
+$countStmt->execute($params);
+$total_records = $countStmt->fetchColumn();
+$total_pages = ceil($total_records / $limit);
+
+// Fetch records
+$stmt = $pdo->prepare("SELECT * FROM invoices $whereClause ORDER BY id DESC LIMIT $limit OFFSET $offset");
+$stmt->execute($params);
 $invoices = $stmt->fetchAll();
 
 function formatCurrency($amount) {
@@ -73,6 +104,60 @@ function formatCurrency($amount) {
       text-decoration: none;
     }
     .btn-outline:hover { background: var(--gold); color: var(--white); }
+    
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      background: var(--bg);
+      padding: 16px 20px;
+      border-radius: 8px;
+    }
+    .search-input {
+      padding: 10px 14px;
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      width: 250px;
+    }
+    .search-input:focus { outline: none; border-color: var(--gold); }
+    .filter-select {
+      padding: 10px 14px;
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      cursor: pointer;
+      background: #fff;
+    }
+    .filter-select:focus { outline: none; border-color: var(--gold); }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 30px;
+    }
+    .page-link {
+      padding: 8px 14px;
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      color: var(--ink-soft);
+      text-decoration: none;
+      font-size: 14px;
+      background: var(--white);
+    }
+    .page-link:hover {
+      border-color: var(--green);
+      color: var(--green);
+    }
+    .page-link.active {
+      background: var(--green);
+      color: var(--white);
+      border-color: var(--green);
+    }
     
     table {
       width: 100%;
@@ -183,10 +268,32 @@ function formatCurrency($amount) {
     <h1>All Invoices</h1>
     <a href="index.php" class="btn">+ Create New Invoice</a>
   </div>
+
+  <form method="GET" class="controls">
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <input type="text" name="search" class="search-input" placeholder="Search client or invoice no..." value="<?= htmlspecialchars($search) ?>">
+      <select name="status" class="filter-select">
+        <option value="">All Statuses</option>
+        <option value="new" <?= $status_filter === 'new' ? 'selected' : '' ?>>New</option>
+        <option value="pending" <?= $status_filter === 'pending' ? 'selected' : '' ?>>Pending</option>
+        <option value="partial payment" <?= $status_filter === 'partial payment' ? 'selected' : '' ?>>Partial Payment</option>
+        <option value="full paid" <?= $status_filter === 'full paid' ? 'selected' : '' ?>>Full Paid</option>
+        <option value="completed" <?= $status_filter === 'completed' ? 'selected' : '' ?>>Completed</option>
+      </select>
+      <button type="submit" class="btn-outline" style="padding: 10px 16px; font-size: 14px;">Filter</button>
+      <?php if ($search !== '' || $status_filter !== ''): ?>
+        <a href="invoices.php" style="font-size: 13px; color: var(--ink-faint); text-decoration: none; margin-left: 10px;">Clear</a>
+      <?php endif; ?>
+    </div>
+    <div style="font-size: 13px; color: var(--ink-faint);">
+      Total: <?= $total_records ?>
+    </div>
+  </form>
   
   <table>
     <thead>
       <tr>
+        <th style="width: 40px;">#</th>
         <th>Invoice No</th>
         <th>Client Name</th>
         <th>Issue Date</th>
@@ -198,11 +305,12 @@ function formatCurrency($amount) {
     <tbody>
       <?php if (empty($invoices)): ?>
         <tr>
-          <td colspan="6" style="text-align:center; color: var(--ink-faint);">No invoices found.</td>
+          <td colspan="7" style="text-align:center; color: var(--ink-faint); padding: 40px 20px;">No invoices found matching your criteria.</td>
         </tr>
       <?php else: ?>
-        <?php foreach ($invoices as $inv): ?>
+        <?php foreach ($invoices as $index => $inv): ?>
         <tr>
+          <td style="color: var(--ink-faint);"><?= $offset + $index + 1 ?></td>
           <td class="inv-no"><?= htmlspecialchars($inv['invoice_no']) ?></td>
           <td><?= htmlspecialchars($inv['bill_to_name']) ?></td>
           <td><?= date('d M Y', strtotime($inv['issue_date'])) ?></td>
@@ -225,6 +333,34 @@ function formatCurrency($amount) {
       <?php endif; ?>
     </tbody>
   </table>
+
+  <?php if ($total_pages > 1): ?>
+  <div class="pagination">
+    <?php
+      $query_params = $_GET;
+      if ($page > 1):
+        $query_params['page'] = $page - 1;
+        $prev_link = '?' . http_build_query($query_params);
+    ?>
+      <a href="<?= htmlspecialchars($prev_link) ?>" class="page-link">Previous</a>
+    <?php endif; ?>
+
+    <?php for ($i = 1; $i <= $total_pages; $i++): 
+      $query_params['page'] = $i;
+      $link = '?' . http_build_query($query_params);
+    ?>
+      <a href="<?= htmlspecialchars($link) ?>" class="page-link <?= $i === $page ? 'active' : '' ?>"><?= $i ?></a>
+    <?php endfor; ?>
+
+    <?php
+      if ($page < $total_pages):
+        $query_params['page'] = $page + 1;
+        $next_link = '?' . http_build_query($query_params);
+    ?>
+      <a href="<?= htmlspecialchars($next_link) ?>" class="page-link">Next</a>
+    <?php endif; ?>
+  </div>
+  <?php endif; ?>
 </div>
 
 <div id="toast">Status updated successfully!</div>
