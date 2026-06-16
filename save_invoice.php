@@ -12,6 +12,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $bill_to_phone = $_POST['bill_to_phone'] ?? '';
     $project_amount = $_POST['project_amount'] ?? 0;
     $total_due = $_POST['total_due'] ?? 0;
+    $discount = $_POST['discount'] ?? 0;
+    $net_total = $_POST['net_total'] ?? 0;
+    $deposit_percentage = $_POST['deposit_percentage'] ?? 0;
+    $deposit_amount = $_POST['deposit_amount'] ?? 0;
+    $deposit_status = $_POST['deposit_status'] ?? 'pending';
+    $deposit_paid_date = !empty($_POST['deposit_paid_date']) ? $_POST['deposit_paid_date'] : null;
+    $balance_remaining = $_POST['balance_remaining'] ?? 0;
 
     try {
         $pdo->beginTransaction();
@@ -19,9 +26,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // 1. Insert main invoice record with a temporary invoice_no
         $stmt = $pdo->prepare("
             INSERT INTO invoices 
-            (invoice_no, issue_date, due_date, status, bill_to_name, bill_to_email, bill_to_town_city, bill_to_region_country, bill_to_phone, project_amount, total_due) 
+            (invoice_no, issue_date, due_date, status, bill_to_name, bill_to_email, bill_to_town_city, bill_to_region_country, bill_to_phone, project_amount, total_due, discount, net_total, deposit_percentage, deposit_amount, deposit_status, deposit_paid_date, balance_remaining) 
             VALUES 
-            ('TEMP', :issue_date, :due_date, :status, :bill_name, :bill_email, :bill_town, :bill_region, :bill_phone, :project_amount, :total_due)
+            ('TEMP', :issue_date, :due_date, :status, :bill_name, :bill_email, :bill_town, :bill_region, :bill_phone, :project_amount, :total_due, :discount, :net_total, :deposit_percentage, :deposit_amount, :deposit_status, :deposit_paid_date, :balance_remaining)
         ");
 
         $stmt->execute([
@@ -34,7 +41,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':bill_region' => $bill_to_region_country,
             ':bill_phone' => $bill_to_phone,
             ':project_amount' => $project_amount,
-            ':total_due' => $total_due
+            ':total_due' => $total_due,
+            ':discount' => $discount,
+            ':net_total' => $net_total,
+            ':deposit_percentage' => $deposit_percentage,
+            ':deposit_amount' => $deposit_amount,
+            ':deposit_status' => $deposit_status,
+            ':deposit_paid_date' => $deposit_paid_date,
+            ':balance_remaining' => $balance_remaining
         ]);
 
         $invoice_id = $pdo->lastInsertId();

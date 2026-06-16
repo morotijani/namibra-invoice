@@ -161,6 +161,23 @@ function generateInvoicePDF($invoice_id, $pdo) {
     </div>
 
     <div class="table-wrap">
+      <?php if ($invoice['deposit_status'] === 'paid' && $invoice['deposit_amount'] > 0): ?>
+      <div style="margin-bottom: 24px; background: #eff5f2; border: 1px solid #d1e2da; border-radius: 9px; padding: 14px 20px;">
+        <table width="100%" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="36" valign="middle">
+              <div style="width: 26px; height: 26px; background: #0f3d2e; border-radius: 13px; text-align: center; line-height: 26px; color: #fff; font-size: 14px; font-weight: bold;">&#10003;</div>
+            </td>
+            <td valign="middle" style="font-size: 13.5px; color: #14201b; line-height: 1.5;">
+              <strong style="color: #0f3d2e;">Payment received.</strong> 
+              A <?= $invoice['deposit_percentage'] ?>% deposit of <?= formatCurrencyPDF($invoice['deposit_amount']) ?> was paid on <?= date('d M Y', strtotime($invoice['deposit_paid_date'])) ?>. Thank you. 
+              The remaining balance of <?= formatCurrencyPDF($invoice['balance_remaining']) ?> is due after completion &amp; delivery.
+            </td>
+          </tr>
+        </table>
+      </div>
+      <?php endif; ?>
+
       <table class="items">
         <thead>
           <tr>
@@ -195,13 +212,48 @@ function generateInvoicePDF($invoice_id, $pdo) {
     <div class="totals">
       <table width="100%" cellspacing="0" cellpadding="0">
         <tr>
-          <td width="55%"></td>
-          <td width="45%">
+          <td width="55%" valign="top">
+            <?php if ($invoice['deposit_status'] === 'paid'): ?>
+              <div style="transform: rotate(-15deg); margin-top: 40px; margin-left: 20px; display: inline-block; padding: 10px 20px; border: 3px solid #6b9e78; color: #6b9e78; font-family: 'DM Serif Display', serif; font-size: 28px; letter-spacing: 4px; border-radius: 8px;">
+                PAID<br/><span style="font-family: 'DM Sans', sans-serif; font-size: 10px; letter-spacing: 2px;"><?= $invoice['deposit_percentage'] ?>% DEPOSIT</span>
+              </div>
+            <?php endif; ?>
+          </td>
+          <td width="45%" valign="top">
             <table width="100%" cellspacing="0" cellpadding="0">
               <tr>
                 <td style="padding: 11px 0; border-bottom: 1px solid var(--rule); font-size: 14px; color: var(--ink-soft);">Project Amount</td>
                 <td align="right" style="padding: 11px 0; border-bottom: 1px solid var(--rule); font-size: 14px; font-family: 'DM Mono', monospace; color: var(--ink);"><?= formatCurrencyPDF($invoice['project_amount']) ?></td>
               </tr>
+              <?php if ($invoice['discount'] > 0): ?>
+              <tr>
+                <td style="padding: 11px 0; border-bottom: 1px solid var(--rule); font-size: 14px; color: #a0521f;">Discount</td>
+                <td align="right" style="padding: 11px 0; border-bottom: 1px solid var(--rule); font-size: 14px; font-family: 'DM Mono', monospace; color: #a0521f;">&minus; <?= formatCurrencyPDF($invoice['discount']) ?></td>
+              </tr>
+              <tr>
+                <td style="padding: 11px 0; border-bottom: 1px solid var(--rule); font-size: 14px; color: var(--ink); font-weight: bold;">Net Project Total</td>
+                <td align="right" style="padding: 11px 0; border-bottom: 1px solid var(--rule); font-size: 14px; font-family: 'DM Mono', monospace; color: var(--ink); font-weight: bold;"><?= formatCurrencyPDF($invoice['net_total']) ?></td>
+              </tr>
+              <?php endif; ?>
+              
+              <?php if ($invoice['deposit_amount'] > 0): ?>
+              <tr>
+                <td style="padding: 11px 0; border-bottom: 1px solid var(--rule); font-size: 14px; color: #a0521f;">Deposit Paid (<?= $invoice['deposit_percentage'] ?>%)</td>
+                <td align="right" style="padding: 11px 0; border-bottom: 1px solid var(--rule); font-size: 14px; font-family: 'DM Mono', monospace; color: #a0521f;">&minus; <?= formatCurrencyPDF($invoice['deposit_amount']) ?></td>
+              </tr>
+              <tr>
+                <td colspan="2" style="padding-top: 14px;">
+                  <div class="tot-grand">
+                    <table width="100%" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td style="font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold-soft);">Balance Remaining</td>
+                        <td align="right" style="font-family: 'DM Serif Display', serif; font-size: 24px; color: #fff;"><?= formatCurrencyPDF($invoice['balance_remaining']) ?></td>
+                      </tr>
+                    </table>
+                  </div>
+                </td>
+              </tr>
+              <?php else: ?>
               <tr>
                 <td colspan="2" style="padding-top: 14px;">
                   <div class="tot-grand">
@@ -214,11 +266,45 @@ function generateInvoicePDF($invoice_id, $pdo) {
                   </div>
                 </td>
               </tr>
+              <?php endif; ?>
             </table>
           </td>
         </tr>
       </table>
     </div>
+
+    <?php if ($invoice['deposit_percentage'] > 0 && $invoice['deposit_percentage'] < 100): ?>
+    <div style="margin: 0 52px 40px; border: 1px solid #e4e9e5; border-radius: 10px; background: #faf8f2;">
+      <table width="100%" cellspacing="0" cellpadding="0">
+        <tr>
+          <td style="padding: 16px 20px; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #1c5440; font-weight: bold; border-bottom: 1px solid #e4e9e5;">Payment Schedule (<?= $invoice['deposit_percentage'] ?> / <?= 100 - $invoice['deposit_percentage'] ?>)</td>
+          <td align="right" style="padding: 16px 20px; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #1c5440; font-weight: bold; border-bottom: 1px solid #e4e9e5;">Amount</td>
+        </tr>
+        <tr>
+          <td style="padding: 16px 20px; font-size: 13.5px; color: #14201b; border-bottom: 1px solid #e4e9e5;">
+            1 &middot; Deposit &mdash; before project commences
+            <?php if ($invoice['deposit_status'] === 'paid'): ?>
+              &nbsp;&nbsp;<span style="color: #0f3d2e; font-size: 10px; font-weight: bold;">[ PAID - <?= strtoupper(date('d M Y', strtotime($invoice['deposit_paid_date']))) ?> ]</span>
+            <?php else: ?>
+              &nbsp;&nbsp;<span style="color: #8b988f; font-size: 10px; font-weight: bold;">[ PENDING ]</span>
+            <?php endif; ?>
+          </td>
+          <td align="right" style="padding: 16px 20px; font-size: 13.5px; font-family: 'DM Mono', monospace; border-bottom: 1px solid #e4e9e5;"><?= formatCurrencyPDF($invoice['deposit_amount']) ?></td>
+        </tr>
+        <tr>
+          <td style="padding: 16px 20px; font-size: 13.5px; color: #14201b;">
+            2 &middot; Final balance &mdash; after completion &amp; delivery
+            <?php if ($invoice['status'] === 'completed' || $invoice['status'] === 'full paid'): ?>
+              &nbsp;&nbsp;<span style="color: #0f3d2e; font-size: 10px; font-weight: bold;">[ PAID ]</span>
+            <?php else: ?>
+              &nbsp;&nbsp;<span style="color: #8b988f; font-size: 10px; font-weight: bold;">[ PENDING ]</span>
+            <?php endif; ?>
+          </td>
+          <td align="right" style="padding: 16px 20px; font-size: 13.5px; font-family: 'DM Mono', monospace;"><?= formatCurrencyPDF($invoice['balance_remaining']) ?></td>
+        </tr>
+      </table>
+    </div>
+    <?php endif; ?>
 
     <div class="bottom">
       <table width="100%" cellspacing="0" cellpadding="0">

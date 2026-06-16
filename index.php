@@ -240,11 +240,41 @@
 
       <button type="button" class="btn btn-outline" id="addRowBtn">+ Add Row</button>
 
-      <div class="totals">
-        Total Due: &nbsp;GH₵ <span id="grandTotal">0.00</span>
+      <h3 style="margin-top: 40px;">Payment & Discounts</h3>
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Discount (GH₵)</label>
+          <input type="number" step="0.01" min="0" name="discount" id="discountInput" value="0.00">
+        </div>
+        <div class="form-group">
+          <label>Deposit Percentage (%)</label>
+          <input type="number" step="1" min="0" max="100" name="deposit_percentage" id="depositPercentageInput" value="50">
+        </div>
+        <div class="form-group">
+          <label>Deposit Status</label>
+          <select name="deposit_status" id="depositStatusInput">
+            <option value="pending">Pending</option>
+            <option value="paid">Paid</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Deposit Paid Date (If Paid)</label>
+          <input type="date" name="deposit_paid_date">
+        </div>
+      </div>
+
+      <div class="totals" style="flex-direction: column; align-items: flex-end; font-size: 15px; font-weight: normal; border-top: none;">
+        <div style="margin-bottom: 8px;">Project Amount: &nbsp;<strong>GH₵ <span id="grandTotal">0.00</span></strong></div>
+        <div style="margin-bottom: 8px; color: var(--danger);">Discount: &nbsp;<strong>- GH₵ <span id="discountDisplay">0.00</span></strong></div>
+        <div style="margin-bottom: 8px; font-size: 17px;">Net Project Total: &nbsp;<strong>GH₵ <span id="netTotalDisplay">0.00</span></strong></div>
+        <div style="margin-bottom: 8px; color: var(--gold);">Deposit (<span id="depPercentDisplay">50</span>%): &nbsp;<strong>- GH₵ <span id="depositDisplay">0.00</span></strong></div>
+        <div style="font-size: 22px; color: var(--green); font-weight: bold; margin-top: 10px; border-top: 2px solid var(--rule); padding-top: 10px;">Balance Remaining: &nbsp;GH₵ <span id="balanceDisplay">0.00</span></div>
       </div>
 
       <input type="hidden" name="project_amount" id="project_amount_input" value="0">
+      <input type="hidden" name="net_total" id="net_total_input" value="0">
+      <input type="hidden" name="deposit_amount" id="deposit_amount_input" value="0">
+      <input type="hidden" name="balance_remaining" id="balance_remaining_input" value="0">
       <input type="hidden" name="total_due" id="total_due_input" value="0">
 
       <div style="margin-top: 40px; text-align: right;">
@@ -261,6 +291,19 @@
     const projectAmountInput = document.getElementById('project_amount_input');
     const totalDueInput = document.getElementById('total_due_input');
 
+    const discountInput = document.getElementById('discountInput');
+    const depositPercentageInput = document.getElementById('depositPercentageInput');
+
+    const discountDisplay = document.getElementById('discountDisplay');
+    const netTotalDisplay = document.getElementById('netTotalDisplay');
+    const depPercentDisplay = document.getElementById('depPercentDisplay');
+    const depositDisplay = document.getElementById('depositDisplay');
+    const balanceDisplay = document.getElementById('balanceDisplay');
+
+    const netTotalInput = document.getElementById('net_total_input');
+    const depositAmountInput = document.getElementById('deposit_amount_input');
+    const balanceRemainingInput = document.getElementById('balance_remaining_input');
+
     function calculateTotals() {
       let grandTotal = 0;
       const rows = tableBody.querySelectorAll('tr');
@@ -274,10 +317,30 @@
         grandTotal += amount;
       });
 
+      const discount = parseFloat(discountInput.value) || 0;
+      const netTotal = Math.max(0, grandTotal - discount);
+      
+      const depositPercent = parseFloat(depositPercentageInput.value) || 0;
+      const depositAmount = (netTotal * depositPercent) / 100;
+      
+      const balance = netTotal - depositAmount;
+
       grandTotalSpan.textContent = grandTotal.toFixed(2);
+      discountDisplay.textContent = discount.toFixed(2);
+      netTotalDisplay.textContent = netTotal.toFixed(2);
+      depPercentDisplay.textContent = depositPercent;
+      depositDisplay.textContent = depositAmount.toFixed(2);
+      balanceDisplay.textContent = balance.toFixed(2);
+
       projectAmountInput.value = grandTotal.toFixed(2);
-      totalDueInput.value = grandTotal.toFixed(2);
+      netTotalInput.value = netTotal.toFixed(2);
+      depositAmountInput.value = depositAmount.toFixed(2);
+      balanceRemainingInput.value = balance.toFixed(2);
+      totalDueInput.value = netTotal.toFixed(2);
     }
+
+    discountInput.addEventListener('input', calculateTotals);
+    depositPercentageInput.addEventListener('input', calculateTotals);
 
     addRowBtn.addEventListener('click', () => {
       const tr = document.createElement('tr');
