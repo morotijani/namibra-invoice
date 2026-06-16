@@ -118,7 +118,10 @@
 <body>
 
 <div class="container">
-  <h1>Create New Invoice</h1>
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+    <h1>Create New Invoice</h1>
+    <a href="invoices.php" class="btn btn-outline" style="text-decoration: none;">View All Invoices</a>
+  </div>
   
   <form action="save_invoice.php" method="POST">
     
