@@ -88,6 +88,12 @@ $status_class = 'status-' . str_replace(' ', '-', $invoice['status']);
       box-shadow: 0 4px 15px rgba(0, 0, 0, .05);
     }
 
+    .action-bar .left-acts {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
     .action-bar .left-acts a {
       text-decoration: none;
       color: var(--ink-soft);
@@ -645,6 +651,10 @@ $status_class = 'status-' . str_replace(' ', '-', $invoice['status']);
           <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
         </svg>
         Create New
+      </a>
+      <a href="edit.php?id=<?= $invoice_id ?>">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+        Edit Invoice
       </a>
     </div>
     <div style="display: flex; gap: 10px; align-items: center;">

@@ -217,6 +217,7 @@ function formatCurrency($amount) {
             </select>
           </td>
           <td>
+            <a href="edit.php?id=<?= $inv['id'] ?>" class="btn-outline" style="border-color: var(--green); color: var(--green); margin-right: 4px;">Edit</a>
             <a href="preview.php?id=<?= $inv['id'] ?>" class="btn-outline">View / PDF</a>
           </td>
         </tr>
